@@ -12,6 +12,7 @@ defmodule Incrementer.Application do
     children = [
       # Starts a worker by calling: Incrementer.Worker.start_link(arg1, arg2, arg3)
       # worker(Incrementer.Worker, [arg1, arg2, arg3]),
+      worker(Incrementer.Router, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
