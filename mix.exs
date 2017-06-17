@@ -30,6 +30,7 @@ defmodule Incrementer.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:cowboy, "~> 1.1"},
-     {:plug, "~> 1.3"}]
+     {:plug, "~> 1.3"},
+     {:sqlitex, "~> 1.3"}]
   end
 end

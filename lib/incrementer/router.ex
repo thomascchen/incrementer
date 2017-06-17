@@ -12,18 +12,25 @@ defmodule Incrementer.Router do
 
   post "/increment" do
     %{"key" => key, "value" => value} = conn.params
-    key = String.to_atom(key)
+    name = String.to_atom(key)
     value = String.to_integer(value)
 
-    pid = case GenServer.whereis(key) do
+    pid = case GenServer.whereis(name) do
       nil ->
-        {:ok, process} = Incrementer.GenServer.start(key)
+        {:ok, process} = Incrementer.GenServer.start(name)
         process
       _ ->
-        key
+        name
     end
 
     response = Incrementer.GenServer.increment(pid, value)
+
+    Sqlitex.with_db("./numbers.db", fn(db) ->
+      Sqlitex.query(
+        db,
+        "INSERT INTO numbers (key, value) VALUES ($1, $2)",
+        bind: [key, value])
+    end)
 
     conn
     |> send_resp(200, Integer.to_string(response))
