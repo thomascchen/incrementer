@@ -1,4 +1,4 @@
-defmodule Incrementer.Handler do
+defmodule Incrementer.GenServer do
   use GenServer
 
   def start(key) do

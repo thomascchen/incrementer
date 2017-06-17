@@ -17,13 +17,13 @@ defmodule Incrementer.Router do
 
     pid = case GenServer.whereis(key) do
       nil ->
-        {:ok, process} = Incrementer.Handler.start(key)
+        {:ok, process} = Incrementer.GenServer.start(key)
         process
       _ ->
         key
     end
 
-    response = Incrementer.Handler.increment(pid, value)
+    response = Incrementer.GenServer.increment(pid, value)
 
     conn
     |> send_resp(200, Integer.to_string(response))
