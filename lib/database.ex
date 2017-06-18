@@ -20,4 +20,13 @@ defmodule Database do
       CREATE UNIQUE INDEX numbers_key_index ON numbers (key);
       """)
   end
+
+  def drop do
+    File.rm("./numbers.db")
+  end
+
+  def reset do
+    Database.drop
+    Database.create
+  end
 end
