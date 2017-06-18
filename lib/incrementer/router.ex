@@ -23,14 +23,7 @@ defmodule Incrementer.Router do
         name
     end
 
-    response = Incrementer.GenServer.increment(pid, value)
-
-    Sqlitex.with_db("./numbers.db", fn(db) ->
-      Sqlitex.query(
-        db,
-        "INSERT INTO numbers (key, value) VALUES ($1, $2)",
-        bind: [key, value])
-    end)
+    response = Incrementer.GenServer.increment(pid, {key, value})
 
     conn
     |> send_resp(200, Integer.to_string(response))
