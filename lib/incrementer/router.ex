@@ -15,18 +15,17 @@ defmodule Incrementer.Router do
     name = String.to_atom(key)
     value = String.to_integer(value)
 
-    pid = case GenServer.whereis(name) do
-      nil ->
-        {:ok, process} = Incrementer.GenServer.start(name)
+    pid = case Incrementer.Impl.start(name) do
+      {:ok, process} ->
         process
-      _ ->
-        name
+      {:error, {:already_started, process}} ->
+        process
     end
 
-    response = Incrementer.GenServer.increment(pid, {key, value})
+    Incrementer.Impl.increment(pid, {key, value})
 
     conn
-    |> send_resp(200, Integer.to_string(response))
+    |> send_resp(200, "")
   end
 
   match _ do
