@@ -12,8 +12,9 @@ defmodule Incrementer do
     children = [
       # Starts a worker by calling: Incrementer.Worker.start_link(arg1, arg2, arg3)
       # worker(Incrementer.Worker, [arg1, arg2, arg3]),
-      worker(Incrementer.Cache, []),
+      # worker(Incrementer.Cache, []),
       worker(Sqlitex.Server, ["./numbers.db", [name: :numbers]]),
+      worker(Incrementer.Queue, []),
       worker(Incrementer.Router, [])
     ]
 
