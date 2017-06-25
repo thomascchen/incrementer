@@ -24,7 +24,7 @@ defmodule Incrementer.Impl do
     #   bind: [key, new_state]
     # )
 
-    :ets.insert(:cache, {key, new_state})
+    :ets.insert(:cache, {key, new_state, System.monotonic_time()})
 
     {:reply, new_state, new_state}
   end

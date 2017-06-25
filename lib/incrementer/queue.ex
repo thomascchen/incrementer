@@ -11,24 +11,16 @@ defmodule Incrementer.Queue do
   def handle_info(:work, state) do
     new_state = case :queue.out(state) do
       {{_value, statement}, new_queue} ->
-        # IO.puts(statement)
-        # prev = System.monotonic_time()
         Sqlitex.Server.exec(:numbers, statement)
-        # next = System.monotonic_time()
-        # diff = next - prev
-        # time = System.convert_time_unit(diff, :native, :millisecond)
-        # IO.inspect(time)
-
         new_queue
       _ ->
-        # Queue is empty - restarting queue.
         state
     end
 
-    synced_state = sync_ets(new_state)
+    updated_state = sync_ets(new_state)
     schedule_work()
 
-    {:noreply, synced_state}
+    {:noreply, updated_state}
   end
 
   def init(_args) do
@@ -46,36 +38,35 @@ defmodule Incrementer.Queue do
 
   # Private
 
-  # defp initialize_queue do
-  #   case :ets.tab2list(:cache) do
-  #     [] ->
-  #       :queue.new()
-  #     _ ->
-  #       sync_ets(:queue.new())
-  #   end
-  # end
+  defp clean_ets(sync_time) do
+    match_spec =[{{:"$1", :"$2", :"$3"}, [{:>, {:-, sync_time, :"$3"}, 1000000000}], [true]}]
 
-  defp format_data({key, value}) do
-    "(#{key}, #{value})"
+    :ets.select_delete(:cache, match_spec)
   end
 
-  # defp execute(statement) do
-  #   Sqlitex.Server.exec(:numbers, statement)
-  # end
+  defp format_data({key, value, _timestamp}) do
+    "(#{key}, #{value})"
+  end
 
   defp schedule_work do
     Process.send_after(self(), :work, 5000) # 5 seconds
   end
 
   defp sync_ets(statement_queue) do
+    sync_time = System.monotonic_time()
+
     values = :ets.tab2list(:cache)
       |> Enum.map(fn(x) -> format_data(x) end)
       |> Enum.join(", ")
 
-    ets_statement = "INSERT OR REPLACE INTO numbers VALUES #{values}"
+    if String.length(values) > 0 do
+      clean_ets(sync_time)
 
-    :ets.delete_all_objects(:cache)
+      ets_statement = "INSERT OR REPLACE INTO numbers VALUES #{values}"
 
-    :queue.in(ets_statement, statement_queue)
+      :queue.in(ets_statement, statement_queue)
+    else
+      statement_queue
+    end
   end
 end
