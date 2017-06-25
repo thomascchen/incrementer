@@ -3,7 +3,7 @@ defmodule Incrementer.Queue do
   use GenServer
 
   def start_link do
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, :queue.new())
   end
 
   # Callbacks
@@ -23,7 +23,7 @@ defmodule Incrementer.Queue do
     {:noreply, updated_state}
   end
 
-  def init(_args) do
+  def init(arg) do
     :ets.new(
       :cache,
       [:named_table,
@@ -33,7 +33,7 @@ defmodule Incrementer.Queue do
 
     schedule_work()
 
-    {:ok, :queue.new()}
+    {:ok, arg}
   end
 
   # Private

@@ -1,36 +1,25 @@
 defmodule Incrementer.Router do
   use Plug.Router
+  require Logger
 
   plug Plug.Parsers, parsers: [:urlencoded]
   plug :match
   plug :dispatch
 
-  get "/" do
-    conn
-    |> send_resp(200, "get!")
-  end
-
   post "/increment" do
     %{"key" => key, "value" => value} = conn.params
-    name = String.to_atom(key)
-    value = String.to_integer(value)
 
-    pid = case Incrementer.Impl.start(name) do
+    pid = case Incrementer.Server.start(key) do
       {:ok, process} ->
         process
       {:error, {:already_started, process}} ->
         process
     end
 
-    Incrementer.Impl.increment(pid, {key, value})
+    Incrementer.Server.increment(pid, {key, value})
 
     conn
-    |> send_resp(200, "")
-  end
-
-  match _ do
-    conn
-    |> send_resp(200, "other!")
+    |> send_resp(200, "success")
   end
 
   def start_link do
