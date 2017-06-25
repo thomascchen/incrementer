@@ -1,6 +1,7 @@
 defmodule Database do
   @moduledoc """
-  This module contains functions for interfacing with the database
+  This module contains convenience functions for creating, dropping, and resetting
+  the database.
   """
 
   @doc """
@@ -21,10 +22,16 @@ defmodule Database do
       """)
   end
 
+  @doc """
+  Drops the database
+  """
   def drop do
     File.rm("./numbers.db")
   end
 
+  @doc """
+  Drops and creats the database
+  """
   def reset do
     Database.drop
     Database.create

@@ -22,6 +22,9 @@ defmodule Incrementer.Router do
     |> send_resp(200, "success")
   end
 
+  @doc """
+  Starts the server on port 3333
+  """
   def start_link do
     {:ok, _} = Plug.Adapters.Cowboy.http(Incrementer.Router, [], port: 3333)
   end

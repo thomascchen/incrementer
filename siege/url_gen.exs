@@ -1,4 +1,13 @@
 defmodule Siege.UrlGen do
+  @moduledoc """
+  Convenience function for generating test urls to test using the Siege
+  load testing tool. See: https://www.joedog.org/siege-home/
+  """
+
+  @doc """
+  Generates 1000 urls with random keys ranging from 1..100 and values
+  ranging from 1..100. Writes these urls to `./siege/urls.text`.
+  """
   def generate do
     rows = Enum.map(
       1..1_000,
