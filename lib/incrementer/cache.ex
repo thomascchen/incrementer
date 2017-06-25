@@ -1,26 +1,28 @@
 defmodule Incrementer.Cache do
-  use GenServer
-
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, [
-      {:ets_table_name, :cache}
-    ])
-  end
-
-  # Callbacks
-
-  def init(args) do
-    [{:ets_table_name, ets_table_name}] = args
-
+  def init do
     :ets.new(
-      ets_table_name,
+      :cache,
       [:named_table,
         :set,
-        :public,
-        {:read_concurrency, true},
-        {:write_concurrency, true}]
+        :public]
     )
+  end
 
-    {:ok, %{ets_table_name: ets_table_name}}
+  def formatted_values do
+    :cache
+      |> :ets.tab2list
+      |> Enum.map(fn({k, v, _t}) -> "(#{k}, #{v})" end)
+      |> Enum.join(", ")
+  end
+
+  def values? do
+    String.length(formatted_values()) > 0
+  end
+
+  def cleanup do
+    time = System.monotonic_time()
+    match_spec = [{{:"$1", :"$2", :"$3"}, [{:>, {:-, time, :"$3"}, 1_000_000_000}], [true]}]
+
+    :ets.select_delete(:cache, match_spec)
   end
 end
