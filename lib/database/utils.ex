@@ -1,7 +1,7 @@
-defmodule Database do
+defmodule Database.Utils do
   @moduledoc """
-  This module contains convenience functions for creating, dropping, and resetting
-  the database.
+  This module contains convenience functions for creating, dropping, and
+  resetting the database.
   """
 
   @doc """
@@ -19,7 +19,7 @@ defmodule Database do
     Sqlitex.exec(db, """
       CREATE TABLE numbers (key TEXT, value INTEGER DEFAULT 0);
       CREATE UNIQUE INDEX numbers_key_index ON numbers (key);
-      """)
+    """)
   end
 
   @doc """
@@ -30,10 +30,10 @@ defmodule Database do
   end
 
   @doc """
-  Drops and creats the database
+  Drops and creates the database
   """
   def reset do
-    Database.drop
-    Database.create
+    Database.Utils.drop()
+    Database.Utils.create()
   end
 end

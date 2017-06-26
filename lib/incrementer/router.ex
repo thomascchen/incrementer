@@ -1,6 +1,15 @@
 defmodule Incrementer.Router do
+  @moduledoc """
+  Simple router that accepts a POST request at the "/increment" endpoint, with
+  `key` and `value` parameters, where `key` is a string and `value` is an
+  integer. A successful response body consists of a number that is the sum of
+  the `value` parameter and all previously submitted values associated with
+  this `key`.
+
+  All other paths respond with a 404 status code.
+  """
+
   use Plug.Router
-  require Logger
 
   plug Plug.Parsers, parsers: [:urlencoded]
   plug :match
@@ -16,10 +25,15 @@ defmodule Incrementer.Router do
         process
     end
 
-    Incrementer.Server.increment(pid, {key, value})
+    result = Incrementer.Server.increment(pid, {key, value})
 
     conn
-    |> send_resp(200, "success")
+    |> send_resp(200, Integer.to_string(result))
+  end
+
+  match _ do
+    conn
+    |> send_resp(404, "")
   end
 
   @doc """
