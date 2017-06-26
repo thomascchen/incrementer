@@ -7,8 +7,8 @@ defmodule Incrementer.RouterTest do
 
   test "post /increment returns incremented value" do
     conn = conn(:post, "/increment", "key=a&value=1")
-      |> put_req_header("content-type", "application/x-www-form-urlencoded")
-      |> Router.call(@opts)
+    |> put_req_header("content-type", "application/x-www-form-urlencoded")
+    |> Router.call(@opts)
 
     {status, _headers, body} = sent_resp(conn)
 
@@ -18,7 +18,7 @@ defmodule Incrementer.RouterTest do
 
   test "get / returns 404" do
     response = conn(:get, "/")
-      |> Router.call(@opts)
+    |> Router.call(@opts)
 
     assert(response.status == 404)
   end

@@ -31,8 +31,8 @@ defmodule Incrementer.Cache do
   """
   def formatted_values do
     :cache
-      |> :ets.tab2list
-      |> Enum.map_join(", ", fn({k, v, _t}) -> "(#{k}, #{v})" end)
+    |> :ets.tab2list
+    |> Enum.map_join(", ", fn({k, v, _t}) -> "(#{k}, #{v})" end)
   end
 
   @doc """
