@@ -37,7 +37,7 @@ this `key`. The server will sync to the database about every 5 seconds.
 Run `mix test` to run the tests for the project.
 
 ## Load Testing
-I used a tool called [siege](https://www.joedog.org/siege-home/) for load testing this project in development. I've included a file with 1000 randomly generated test urls in `./siege/urls.txt`, which I generated using a simple script, which can be found and modified in `./siege/url_gen.exs`. To simulate heavy load on the server, start the server and then run:
+I used a tool called [siege](https://www.joedog.org/siege-home/) for load testing this project in development. I've included a file with 1000 randomly generated test urls in `./siege/urls.txt`, which I generated using a simple script, which can be found and modified in `./siege/url_gen.exs`. To simulate heavy load on the server, install siege by running `brew install siege`. Then start the server and run:
 ```
 siege -f siege/urls.txt -c 200 -i -t 20S
 ```
