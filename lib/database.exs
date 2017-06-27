@@ -1,4 +1,4 @@
-defmodule Database.Utils do
+defmodule Database do
   @moduledoc """
   This module contains convenience functions for creating, dropping, and
   resetting the database.
@@ -33,7 +33,10 @@ defmodule Database.Utils do
   Drops and creates the database
   """
   def reset do
-    Database.Utils.drop()
-    Database.Utils.create()
+    Database.drop()
+    Database.create()
   end
 end
+
+Database.reset()
+IO.puts("Fresh database created 🚀")
